@@ -7,16 +7,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
-import io.flutter.plugins.googlemobileads.GoogleMobileAdsPlugin
+import io.flutter.plugins.googlemobileads.NativeAdFactory
 
 /**
  * Maps a Google Mobile Ads [NativeAd] onto the simple "list tile" style
  * layout at res/layout/list_tile_native_ad.xml. Registered under the
  * factoryId "listTile" in MainActivity.kt, matching
  * lib/services/ad_service.dart's `factoryId: 'listTile'`.
+ *
+ * Note: as of google_mobile_ads 9.x, NativeAdFactory is a top-level
+ * interface (io.flutter.plugins.googlemobileads.NativeAdFactory), not
+ * the nested GoogleMobileAdsPlugin.NativeAdFactory used in older versions.
  */
 class ListTileNativeAdFactory(private val layoutInflater: LayoutInflater) :
-    GoogleMobileAdsPlugin.NativeAdFactory {
+    NativeAdFactory {
 
     override fun createNativeAd(
         nativeAd: NativeAd,
