@@ -82,4 +82,18 @@ class ContentParser {
       if (part.startsWith('S:')) ssid = _unescape(part.substring(2));
       if (part.startsWith('P:')) password = _unescape(part.substring(2));
       if (part.startsWith('T:')) encryption = part.substring(2);
-      if (part.startsWith('
+      if (part.startsWith('H:')) hidden = part.substring(2) == 'true';
+    }
+    if (ssid.isEmpty) return null;
+    return WifiCredentials(
+      ssid: ssid,
+      password: password,
+      encryption: encryption,
+      hidden: hidden,
+    );
+  }
+
+  static String _unescape(String value) {
+    return value.replaceAll(r'\;', ';').replaceAll(r'\:', ':').replaceAll(r'\,', ',');
+  }
+}
