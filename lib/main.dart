@@ -27,4 +27,33 @@ class QrScannerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<L
+    return ValueListenableBuilder<Locale?>(
+      valueListenable: LocaleService.instance.locale,
+      builder: (context, locale, _) {
+        return MaterialApp(
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+          debugShowCheckedModeBanner: false,
+          themeMode: ThemeMode.dark,
+          darkTheme: AppTheme.dark,
+          theme: AppTheme.dark, // dark-mode-first: same theme regardless of system setting
+          locale: locale,
+          supportedLocales: LocaleService.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          localeResolutionCallback: (deviceLocale, supported) {
+            if (deviceLocale == null) return supported.first;
+            for (final l in supported) {
+              if (l.languageCode == deviceLocale.languageCode) return l;
+            }
+            return supported.first; // default English if unsupported
+          },
+          home: const RootShell(),
+        );
+      },
+    );
+  }
+}
