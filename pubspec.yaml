@@ -19,7 +19,7 @@ dependencies:
   permission_handler: ^11.3.1              # Runtime permission handling (camera)
 
   # --- Monetization (Google AdMob) ---
-  google_mobile_ads: ^5.2.0                # Banner / Interstitial / Native ads
+  google_mobile_ads: ^9.0.0                # Banner / Interstitial / Native ads
 
   # --- Local Storage ---
   hive: ^2.2.3                             # Lightweight local DB for scan history
