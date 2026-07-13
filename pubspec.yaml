@@ -30,7 +30,7 @@ dependencies:
   qr_flutter: ^4.1.0                       # Generate QR code images
 
   # --- Utilities ---
-  share_plus: ^10.1.2                      # Native share sheet
+  share_plus: ^11.1.0                      # Native share sheet (SharePlus.instance/ShareParams API)
   url_launcher: ^6.3.1                     # Open URLs / Wi-Fi settings
   flutter_riverpod: ^2.6.1                 # State management
   path_provider: ^2.1.5                    # File system paths (saving generated QR images)
