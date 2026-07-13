@@ -86,15 +86,45 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Pre-install CMake (avoid flaky Gradle-triggered download)
+        run: |
+          SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          SDKMANAGER=$(find "$SDK_ROOT/cmdline-tools" -name "sdkmanager" | head -n 1)
+          if [ -n "$SDKMANAGER" ]; then
+            for i in 1 2 3; do
+              yes | "$SDKMANAGER" "cmake;3.22.1" && break
+              echo "sdkmanager attempt $i failed, cleaning and retrying..."
+              rm -rf "$SDK_ROOT/cmake/3.22.1"
+              sleep 5
+            done
+          else
+            echo "sdkmanager not found, skipping pre-install (Gradle will attempt its own download)"
+          fi
+
       - name: Build release APK (test-signed with the default debug key)
         run: |
           set +e
+          status=1
           for i in 1 2 3; do
             echo "=== Build attempt $i ==="
             flutter build apk --release
             status=$?
-            if [ $status -eq 0 ]; then
+            if [ "$status" -eq 0 ]; then
               break
             fi
             echo "Build attempt $i failed (exit $status). Cleaning possibly-corrupt SDK component cache and retrying..."
-      
+            SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+            rm -rf "$SDK_ROOT/cmake" "$HOME/.android/cache"
+            sleep 10
+          done
+          set -e
+          exit "$status"
+
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/QuetQRTpro-test.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quet-qr-tpro-apk
+          path: build/app/outputs/flutter-apk/QuetQRTpro-test.apk
