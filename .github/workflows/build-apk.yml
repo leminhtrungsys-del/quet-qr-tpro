@@ -87,13 +87,14 @@ jobs:
         run: flutter pub get
 
       - name: Build release APK (test-signed with the default debug key)
-        run: flutter build apk --release
-
-      - name: Rename APK
-        run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/QuetQRTpro-test.apk
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: quet-qr-tpro-apk
-          path: build/app/outputs/flutter-apk/QuetQRTpro-test.apk
+        run: |
+          set +e
+          for i in 1 2 3; do
+            echo "=== Build attempt $i ==="
+            flutter build apk --release
+            status=$?
+            if [ $status -eq 0 ]; then
+              break
+            fi
+            echo "Build attempt $i failed (exit $status). Cleaning possibly-corrupt SDK component cache and retrying..."
+      
