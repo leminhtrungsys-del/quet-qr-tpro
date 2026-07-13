@@ -15,7 +15,7 @@ import 'result_screen.dart';
 
 /// Full-screen immersive camera preview with a Bento-style scan frame,
 /// flashlight toggle, pinch-to-zoom, and a small adaptive banner pinned to
-/// the bottom (kept deliberately unobtrusive per the UX spec — no
+/// the bottom (kept deliberately unobtrusive per the UX spec - no
 /// interstitials or native ads live on this screen).
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({super.key});
@@ -298,4 +298,33 @@ class _ScannerScreenState extends State<ScannerScreen> with WidgetsBindingObserv
 }
 
 class _CircleIconButton extends StatelessWidget {
-  final
+  final IconData icon;
+  final bool active;
+  final VoidCallback onTap;
+  final String? tooltip;
+
+  const _CircleIconButton({
+    required this.icon,
+    required this.active,
+    required this.onTap,
+    this.tooltip,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final button = InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: active ? AppColors.accent : Colors.black.withOpacity(0.45),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: active ? Colors.black : Colors.white, size: 22),
+      ),
+    );
+    if (tooltip == null) return button;
+    return Tooltip(message: tooltip!, child: button);
+  }
+}

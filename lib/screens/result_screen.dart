@@ -11,7 +11,7 @@ import '../utils/content_parser.dart';
 
 /// Shown immediately after a successful scan (or when opening a history
 /// item). Displays the content type, raw value, contextual action buttons,
-/// and a Native Ad embedded in the card layout — this is the primary
+/// and a Native Ad embedded in the card layout - this is the primary
 /// monetization surface of the app.
 class ResultScreen extends StatefulWidget {
   final ScanRecord record;
@@ -308,4 +308,16 @@ class _NativeAdCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
             child: Text(
-              AppLocalizations.of(context)!.spon
+              AppLocalizations.of(context)!.sponsored,
+              style: TextStyle(fontSize: 11, color: AppColors.textSecondary.withOpacity(0.8)),
+            ),
+          ),
+          SizedBox(
+            height: 120,
+            child: AdWidget(ad: ad),
+          ),
+        ],
+      ),
+    );
+  }
+}

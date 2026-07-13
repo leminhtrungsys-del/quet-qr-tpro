@@ -7,7 +7,7 @@ import 'scanner_screen.dart';
 
 /// App shell with the 3-tab bottom navigation:
 /// Scanner (default) | History & Generator.
-/// (Result is a pushed route, not a tab — it's reached from Scanner/History.)
+/// (Result is a pushed route, not a tab - it's reached from Scanner/History.)
 class RootShell extends StatefulWidget {
   const RootShell({super.key});
 
@@ -38,4 +38,11 @@ class _RootShellState extends State<RootShell> {
             label: l10n.tabScanner,
           ),
           BottomNavigationBarItem(
-            icon: co
+            icon: const Icon(Icons.grid_view_rounded),
+            label: l10n.tabHistory,
+          ),
+        ],
+      ),
+    );
+  }
+}
