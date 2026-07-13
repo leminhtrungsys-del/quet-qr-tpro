@@ -1,0 +1,47 @@
+name: quet_qr_tpro
+description: "Quét QR Tpro — high-performance QR & Barcode Scanner (EN/VI)."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # --- Scanning & Camera ---
+  google_mlkit_barcode_scanning: ^0.14.1   # Offline, on-device barcode/QR scanning
+  camera: ^0.11.0+2                        # Camera preview control
+  permission_handler: ^11.3.1              # Runtime permission handling (camera)
+
+  # --- Monetization (Google AdMob) ---
+  google_mobile_ads: ^5.2.0                # Banner / Interstitial / Native ads
+
+  # --- Local Storage ---
+  hive: ^2.2.3                             # Lightweight local DB for scan history
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.3.3               # Simple key-value store (ad frequency cap, settings)
+
+  # --- QR Generation ---
+  qr_flutter: ^4.1.0                       # Generate QR code images
+
+  # --- Utilities ---
+  share_plus: ^10.1.2                      # Native share sheet
+  url_launcher: ^6.3.1                     # Open URLs / Wi-Fi settings
+  flutter_riverpod: ^2.6.1                 # State management
+  path_provider: ^2.1.5                    # File system paths (saving generated QR images)
+  screenshot: ^3.0.0                       # Capture generated QR widget as image
+  intl: ^0.19.0                            # Date formatting for history
+  google_fonts: ^6.2.1                     # Typography
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design
