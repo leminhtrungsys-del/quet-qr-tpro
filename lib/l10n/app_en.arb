@@ -1,0 +1,54 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Quét QR Tpro",
+  "@appTitle": {"description": "App name, shown as-is in both languages"},
+
+  "tabScanner": "Scanner",
+  "tabHistory": "History",
+  "scanHintText": "Align the code within the frame",
+
+  "permissionTitle": "Camera Access Needed",
+  "permissionBody": "This app scans QR codes and barcodes using your camera. We only use the camera while scanning — nothing is recorded, saved, or sent anywhere.",
+  "permissionNotNow": "Not Now",
+  "permissionContinue": "Continue",
+  "permissionDeniedTitle": "Camera Access Disabled",
+  "permissionDeniedBody": "To scan codes, please enable camera permission for this app in your device settings.",
+  "permissionGrant": "Grant Permission",
+  "permissionOpenSettings": "Open Settings",
+
+  "resultTitle": "Scan Result",
+  "copiedToClipboard": "Copied to clipboard",
+  "wifiPasswordCopied": "Password copied — opening Wi-Fi settings",
+
+  "contentTypeUrl": "Website URL",
+  "contentTypeWifi": "Wi-Fi Network",
+  "contentTypeContact": "Contact Card",
+  "contentTypeEmail": "Email Address",
+  "contentTypePhone": "Phone Number",
+  "contentTypeSms": "SMS Message",
+  "contentTypeText": "Plain Text",
+
+  "actionOpenBrowser": "Open in Browser",
+  "actionConnectWifi": "Connect to Wi-Fi",
+  "actionCopy": "Copy",
+  "actionShare": "Share",
+  "sponsored": "Sponsored",
+
+  "wifiSsidLabel": "Network (SSID)",
+  "wifiPasswordLabel": "Password",
+  "wifiSecurityLabel": "Security",
+  "none": "(none)",
+
+  "historyGeneratorTitle": "History & Generator",
+  "tabHistoryLabel": "History",
+  "tabGenerateLabel": "Generate",
+  "emptyHistory": "No scans yet.\nYour scan history will show up here.",
+  "generatorHint": "Enter text or URL",
+  "colorLabel": "Color",
+  "emptyGenerator": "Type something above\nto generate a QR code",
+  "actionSave": "Save",
+  "savedToHistory": "Saved to history",
+
+  "languageSwitchTooltip": "Change language"
+}

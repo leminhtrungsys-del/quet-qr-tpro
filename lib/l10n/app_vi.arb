@@ -1,0 +1,53 @@
+{
+  "@@locale": "vi",
+
+  "appTitle": "Quét QR Tpro",
+
+  "tabScanner": "Quét",
+  "tabHistory": "Lịch sử",
+  "scanHintText": "Đưa mã vào giữa khung hình",
+
+  "permissionTitle": "Cần quyền truy cập Camera",
+  "permissionBody": "Ứng dụng dùng camera để quét mã QR và mã vạch. Camera chỉ được sử dụng khi quét — không ghi hình, không lưu trữ, không gửi đi bất cứ đâu.",
+  "permissionNotNow": "Để sau",
+  "permissionContinue": "Tiếp tục",
+  "permissionDeniedTitle": "Camera đang bị tắt quyền",
+  "permissionDeniedBody": "Để quét mã, vui lòng cấp quyền camera cho ứng dụng trong phần Cài đặt của thiết bị.",
+  "permissionGrant": "Cấp quyền",
+  "permissionOpenSettings": "Mở Cài đặt",
+
+  "resultTitle": "Kết quả quét",
+  "copiedToClipboard": "Đã sao chép vào bộ nhớ tạm",
+  "wifiPasswordCopied": "Đã sao chép mật khẩu — đang mở Cài đặt Wi-Fi",
+
+  "contentTypeUrl": "Đường dẫn Website",
+  "contentTypeWifi": "Mạng Wi-Fi",
+  "contentTypeContact": "Danh thiếp",
+  "contentTypeEmail": "Địa chỉ Email",
+  "contentTypePhone": "Số điện thoại",
+  "contentTypeSms": "Tin nhắn SMS",
+  "contentTypeText": "Văn bản thuần",
+
+  "actionOpenBrowser": "Mở trong trình duyệt",
+  "actionConnectWifi": "Kết nối Wi-Fi",
+  "actionCopy": "Sao chép",
+  "actionShare": "Chia sẻ",
+  "sponsored": "Được tài trợ",
+
+  "wifiSsidLabel": "Tên mạng (SSID)",
+  "wifiPasswordLabel": "Mật khẩu",
+  "wifiSecurityLabel": "Bảo mật",
+  "none": "(không có)",
+
+  "historyGeneratorTitle": "Lịch sử & Tạo mã",
+  "tabHistoryLabel": "Lịch sử",
+  "tabGenerateLabel": "Tạo mã",
+  "emptyHistory": "Chưa có mã nào được quét.\nLịch sử quét sẽ hiện ở đây.",
+  "generatorHint": "Nhập văn bản hoặc URL",
+  "colorLabel": "Màu sắc",
+  "emptyGenerator": "Nhập nội dung ở trên\nđể tạo mã QR",
+  "actionSave": "Lưu",
+  "savedToHistory": "Đã lưu vào lịch sử",
+
+  "languageSwitchTooltip": "Đổi ngôn ngữ"
+}
