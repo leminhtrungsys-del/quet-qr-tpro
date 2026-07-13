@@ -1,0 +1,99 @@
+name: Build APK
+
+# Tự động build file APK mỗi khi bạn đẩy code lên nhánh main,
+# hoặc bấm "Run workflow" thủ công trong tab Actions trên GitHub.
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Generate Android platform folder
+        run: flutter create . --platforms=android --org com.tpro.quetqrtpro
+
+      - name: Locate generated Kotlin package
+        id: pkg
+        run: |
+          MAIN_ACTIVITY=$(find android -name "MainActivity.kt" | head -n 1)
+          PKG_DIR=$(dirname "$MAIN_ACTIVITY")
+          PKG_NAME=$(grep '^package ' "$MAIN_ACTIVITY" | sed 's/package //')
+          echo "dir=$PKG_DIR" >> "$GITHUB_OUTPUT"
+          echo "name=$PKG_NAME" >> "$GITHUB_OUTPUT"
+          echo "Found package: $PKG_NAME in $PKG_DIR"
+
+      - name: Rebrand app label to "Quét QR Tpro"
+        run: |
+          sed -i 's/android:label="[^"]*"/android:label="Quét QR Tpro"/' android/app/src/main/AndroidManifest.xml
+
+      - name: Add Camera + AdMob permissions and App ID
+        run: |
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          # Permissions + hardware features, each inserted right after the opening <manifest ...> tag
+          sed -i '/<manifest /a\    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />' "$MANIFEST"
+          sed -i '/<manifest /a\    <uses-feature android:name="android.hardware.camera" android:required="true" />' "$MANIFEST"
+          sed -i '/<manifest /a\    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />' "$MANIFEST"
+          sed -i '/<manifest /a\    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST"
+          sed -i '/<manifest /a\    <uses-permission android:name="android.permission.CAMERA" />' "$MANIFEST"
+          # AdMob TEST App ID — replace with your real one before publishing (see SETUP.md)
+          sed -i '/android:icon="@mipmap\/ic_launcher">/a\        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-3940256099942544~3347511713"/>' "$MANIFEST"
+
+      - name: Lower minSdkVersion to 21 (required by camera + ML Kit)
+        run: |
+          if [ -f android/app/build.gradle.kts ]; then
+            sed -i 's/minSdk = flutter\.minSdkVersion/minSdk = 21/' android/app/build.gradle.kts
+            sed -i 's/minSdk = [0-9]\+/minSdk = 21/' android/app/build.gradle.kts
+          fi
+          if [ -f android/app/build.gradle ]; then
+            sed -i 's/minSdkVersion flutter\.minSdkVersion/minSdkVersion 21/' android/app/build.gradle
+            sed -i 's/minSdkVersion [0-9]\+/minSdkVersion 21/' android/app/build.gradle
+          fi
+
+      - name: Enable multidex (ML Kit + AdMob push past the 64k method limit)
+        run: |
+          if [ -f android/app/build.gradle.kts ]; then
+            sed -i '/applicationId/a\        multiDexEnabled = true' android/app/build.gradle.kts
+          fi
+          if [ -f android/app/build.gradle ]; then
+            sed -i '/applicationId/a\        multiDexEnabled true' android/app/build.gradle
+          fi
+
+      - name: Install Native Ad factory (Kotlin + layout)
+        run: |
+          PKG_DIR="${{ steps.pkg.outputs.dir }}"
+          PKG_NAME="${{ steps.pkg.outputs.name }}"
+          mkdir -p android/app/src/main/res/layout
+          cp ci_assets/list_tile_native_ad.xml android/app/src/main/res/layout/list_tile_native_ad.xml
+          sed "s/__PACKAGE__/$PKG_NAME/" ci_assets/MainActivity.kt.template > "$PKG_DIR/MainActivity.kt"
+          sed "s/__PACKAGE__/$PKG_NAME/" ci_assets/ListTileNativeAdFactory.kt.template > "$PKG_DIR/ListTileNativeAdFactory.kt"
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build release APK (test-signed with the default debug key)
+        run: flutter build apk --release
+
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/QuetQRTpro-test.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quet-qr-tpro-apk
+          path: build/app/outputs/flutter-apk/QuetQRTpro-test.apk
