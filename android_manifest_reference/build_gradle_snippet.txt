@@ -1,0 +1,50 @@
+Reference — merge into android/app/build.gradle (or build.gradle.kts).
+Do not replace the whole file; adjust the relevant blocks below.
+
+------------------------------------------------------------------
+android {
+    namespace "com.yourcompany.quetqrtpro"   // TODO: your real package
+    compileSdkVersion 34
+
+    defaultConfig {
+        applicationId "com.yourcompany.quetqrtpro"  // TODO: must be globally unique on Play Store
+        minSdkVersion 21        // required by camera + google_mlkit_barcode_scanning
+        targetSdkVersion 34
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        multiDexEnabled true    // ML Kit + AdMob push past the 64k method limit
+    }
+
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+------------------------------------------------------------------
+
+You'll also need a key.properties file (NOT committed to git) at
+android/key.properties:
+
+    storePassword=<your-store-password>
+    keyPassword=<your-key-password>
+    keyAlias=<your-key-alias>
+    storeFile=<path-to-your-.jks-keystore>
+
+Generate the keystore once with:
+    keytool -genkey -v -keystore ~/quetqrtpro-release.jks -keyalg RSA \
+      -keysize 2048 -validity 10000 -alias quetqrtpro
+
+Add `android/key.properties` and `*.jks` to .gitignore.
