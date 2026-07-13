@@ -35,7 +35,7 @@ dependencies:
   flutter_riverpod: ^2.6.1                 # State management
   path_provider: ^2.1.5                    # File system paths (saving generated QR images)
   screenshot: ^3.0.0                       # Capture generated QR widget as image
-  intl: ^0.19.0                            # Date formatting for history
+  intl: ^0.20.2                            # Date formatting for history
   google_fonts: ^6.2.1                     # Typography
 
 dev_dependencies:
