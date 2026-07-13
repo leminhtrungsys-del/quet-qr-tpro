@@ -86,20 +86,38 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Pre-install CMake (avoid flaky Gradle-triggered download)
+      - name: Ensure CMake toolchain is available (SDK manager download is flaky on GH runners)
         run: |
           SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
-          SDKMANAGER=$(find "$SDK_ROOT/cmdline-tools" -name "sdkmanager" | head -n 1)
+          CMAKE_BIN="$SDK_ROOT/cmake/3.22.1/bin/cmake"
+
+          SDKMANAGER=$(find "$SDK_ROOT/cmdline-tools" -name "sdkmanager" 2>/dev/null | head -n 1)
           if [ -n "$SDKMANAGER" ]; then
             for i in 1 2 3; do
-              yes | "$SDKMANAGER" "cmake;3.22.1" && break
-              echo "sdkmanager attempt $i failed, cleaning and retrying..."
-              rm -rf "$SDK_ROOT/cmake/3.22.1"
+              if [ -x "$CMAKE_BIN" ]; then break; fi
+              yes | "$SDKMANAGER" "cmake;3.22.1" || true
+              if [ -x "$CMAKE_BIN" ]; then break; fi
+              echo "sdkmanager attempt $i did not produce a working cmake binary, cleaning and retrying..."
+              rm -rf "$SDK_ROOT/cmake/3.22.1" 2>/dev/null || true
               sleep 5
             done
-          else
-            echo "sdkmanager not found, skipping pre-install (Gradle will attempt its own download)"
           fi
+
+          if [ ! -x "$CMAKE_BIN" ]; then
+            echo "SDK-managed CMake unavailable, falling back to the system cmake package"
+            sudo apt-get update -y
+            sudo apt-get install -y cmake ninja-build
+            mkdir -p "$(dirname "$CMAKE_BIN")"
+            ln -sf "$(command -v cmake)" "$CMAKE_BIN"
+            for tool in ctest cpack ninja; do
+              if command -v "$tool" >/dev/null 2>&1; then
+                ln -sf "$(command -v "$tool")" "$(dirname "$CMAKE_BIN")/$tool"
+              fi
+            done
+          fi
+
+          echo "Using CMake at $CMAKE_BIN:"
+          "$CMAKE_BIN" --version
 
       - name: Build release APK (test-signed with the default debug key)
         run: |
@@ -112,9 +130,7 @@ jobs:
             if [ "$status" -eq 0 ]; then
               break
             fi
-            echo "Build attempt $i failed (exit $status). Cleaning possibly-corrupt SDK component cache and retrying..."
-            SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
-            rm -rf "$SDK_ROOT/cmake" "$HOME/.android/cache"
+            echo "Build attempt $i failed (exit $status), retrying..."
             sleep 10
           done
           set -e
