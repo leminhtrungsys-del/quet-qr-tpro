@@ -1,4 +1,4 @@
-# Quét QR Tpro — Setup & Release Guide
+# Quet QR Tpro - Setup & Release Guide
 
 ## 1. Create the project shell
 ```bash
@@ -12,20 +12,20 @@ flutter pub get
 `pubspec.yaml` has `generate: true`, so `flutter pub get` / `flutter run` /
 `flutter build` automatically regenerates
 `lib/l10n/generated/app_localizations.dart` from the two ARB files
-(`lib/l10n/app_en.arb`, `lib/l10n/app_vi.arb`) — no manual codegen step.
+(`lib/l10n/app_en.arb`, `lib/l10n/app_vi.arb`) - no manual codegen step.
 
 ## 2. Android configuration
 - **Manifest**: merge `android_manifest_reference/AndroidManifest_snippet.xml`
   into `android/app/src/main/AndroidManifest.xml` (camera permission, AdMob
-  App ID meta-data, internet permission, app label "Quét QR Tpro").
+  App ID meta-data, internet permission, app label "Quet QR Tpro").
 - **Native Ad factory**: merge `android_manifest_reference/MainActivity_reference.kt`
   into your `MainActivity.kt`. You still need to add:
-  - `ListTileNativeAdFactory.kt` (Kotlin) — reference link is in that file's
+  - `ListTileNativeAdFactory.kt` (Kotlin) - reference link is in that file's
     comments.
-  - `res/layout/list_tile_native_ad.xml` — the native ad's visual layout.
+  - `res/layout/list_tile_native_ad.xml` - the native ad's visual layout.
 - **build.gradle**: see `android_manifest_reference/build_gradle_snippet.txt`
   for `applicationId`, `minSdkVersion 21`, `multiDexEnabled`, and the
-  release **signing config** block (required to publish — Play Store
+  release **signing config** block (required to publish - Play Store
   rejects unsigned/debug-signed release builds).
 - **ProGuard/R8**: copy `android_manifest_reference/proguard-rules.pro` to
   `android/app/proguard-rules.pro` and enable `minifyEnabled true` in the
@@ -36,12 +36,12 @@ flutter pub get
   or use the `flutter_launcher_icons` package to generate all densities
   from one source image.
 
-## 3. Localization (English + Vietnamese) — already wired up
+## 3. Localization (English + Vietnamese) - already wired up
 - `lib/l10n/app_en.arb` / `app_vi.arb` hold every UI string.
 - The app defaults to the **device's system language**, falling back to
   English if the device isn't set to English or Vietnamese.
-- Users can manually override via the 🌐 globe icon on the Scanner screen
-  (top-right) — the choice is remembered via `SharedPreferences`
+- Users can manually override via the globe icon on the Scanner screen
+  (top-right) - the choice is remembered via `SharedPreferences`
   (`lib/services/locale_service.dart`).
 - To add more strings later: add the key to both ARB files, then reference
   it via `AppLocalizations.of(context)!.yourKey`.
@@ -50,7 +50,42 @@ flutter pub get
 
 ## 4. Replace test Ad Unit IDs before release
 All AdMob IDs in `lib/services/ad_service.dart` are Google's public TEST
-IDs — safe for development, but **must be swapped for your real AdMob unit
+IDs - safe for development, but **must be swapped for your real AdMob unit
 IDs before publishing**:
 - `bannerAdUnitId`, `interstitialAdUnitId`, `nativeAdUnitId`
-- The `APPLICATION_ID` 
+- The `APPLICATION_ID` meta-data value in `AndroidManifest.xml`
+
+## 5. What's already implemented
+- **Scanner tab**: live camera + `google_mlkit_barcode_scanning`, animated
+  Bento-style scan frame, pinch-to-zoom, flashlight toggle, language
+  switcher, adaptive banner pinned to the bottom only (no other ads here).
+- **Result screen**: content-type detection (URL / Wi-Fi / contact / email
+  / phone / SMS / text), contextual action buttons, embedded Native Ad
+  card, and an Interstitial that fires only on "Open in Browser" / "Copy"
+  taps - capped to once every 3 such actions.
+- **History & Generator tab**: Hive-backed local history (swipe to
+  delete), QR generator with color picker + save/share, standard banner ad.
+- **Permissions**: rationale dialog before the OS camera prompt, graceful
+  "open Settings" screen on denial.
+- **EN/VI localization** across every screen, with manual + automatic
+  language selection.
+
+## 6. Before publishing to Google Play - checklist
+- [ ] Real AdMob IDs + App ID (step 4)
+- [ ] Real signed release build (`flutter build appbundle --release`) using
+      your own keystore (step 2)
+- [ ] Unique `applicationId` you control
+- [ ] Real app icon + Play Store feature graphic / screenshots
+- [ ] Privacy Policy URL in the Play Console (required - Camera + AdMob)
+- [ ] Data Safety form filled out (camera access, ad SDK data collection)
+- [ ] AdMob **User Messaging Platform (UMP) SDK** integrated for GDPR/UK/CCPA
+      consent if you'll serve ads to EU/UK/California users - not included
+      here; add via `google_mobile_ads`'s UMP APIs before ad requests fire
+      for those regions.
+- [ ] Tested on a **real device** - ML Kit's on-device model and camera
+      streaming behave differently on emulators.
+- [ ] Tested both languages end-to-end (toggle in Scanner screen, and by
+      changing the device's system language).
+- [ ] Content rating questionnaire completed in Play Console.
+- [ ] `flutter build appbundle --release` produces the `.aab` you upload
+      (not `--release` APK - Play Store requires Android App Bundles).

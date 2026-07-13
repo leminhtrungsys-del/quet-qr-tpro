@@ -1,5 +1,5 @@
 name: quet_qr_tpro
-description: "Quét QR Tpro — high-performance QR & Barcode Scanner (EN/VI)."
+description: "Quet QR Tpro - high-performance QR & Barcode Scanner (EN/VI)."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -44,4 +44,5 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter:
-  uses-material-design
+  uses-material-design: true
+  generate: true
