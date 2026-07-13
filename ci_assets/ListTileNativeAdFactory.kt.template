@@ -1,0 +1,63 @@
+package __PACKAGE__
+
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdView
+import io.flutter.plugins.googlemobileads.GoogleMobileAdsPlugin
+
+/**
+ * Maps a Google Mobile Ads [NativeAd] onto the simple "list tile" style
+ * layout at res/layout/list_tile_native_ad.xml. Registered under the
+ * factoryId "listTile" in MainActivity.kt, matching
+ * lib/services/ad_service.dart's `factoryId: 'listTile'`.
+ */
+class ListTileNativeAdFactory(private val layoutInflater: LayoutInflater) :
+    GoogleMobileAdsPlugin.NativeAdFactory {
+
+    override fun createNativeAd(
+        nativeAd: NativeAd,
+        customOptions: MutableMap<String, Any>?
+    ): NativeAdView {
+        val adView = layoutInflater.inflate(
+            R.layout.list_tile_native_ad, null
+        ) as NativeAdView
+
+        val headlineView = adView.findViewById<TextView>(R.id.ad_headline)
+        headlineView.text = nativeAd.headline
+        adView.headlineView = headlineView
+
+        val bodyView = adView.findViewById<TextView>(R.id.ad_body)
+        if (nativeAd.body.isNullOrEmpty()) {
+            bodyView.visibility = View.INVISIBLE
+        } else {
+            bodyView.visibility = View.VISIBLE
+            bodyView.text = nativeAd.body
+        }
+        adView.bodyView = bodyView
+
+        val callToActionView = adView.findViewById<Button>(R.id.ad_call_to_action)
+        if (nativeAd.callToAction.isNullOrEmpty()) {
+            callToActionView.visibility = View.INVISIBLE
+        } else {
+            callToActionView.visibility = View.VISIBLE
+            callToActionView.text = nativeAd.callToAction
+        }
+        adView.callToActionView = callToActionView
+
+        val iconView = adView.findViewById<ImageView>(R.id.ad_app_icon)
+        if (nativeAd.icon == null) {
+            iconView.visibility = View.GONE
+        } else {
+            iconView.setImageDrawable(nativeAd.icon?.drawable)
+            iconView.visibility = View.VISIBLE
+        }
+        adView.iconView = iconView
+
+        adView.setNativeAd(nativeAd)
+        return adView
+    }
+}

@@ -1,0 +1,24 @@
+package __PACKAGE__
+
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugins.googlemobileads.GoogleMobileAdsPlugin
+
+// Registers the "listTile" Native Ad factory used by
+// lib/services/ad_service.dart (AdService.createNativeAd) so the embedded
+// Native Ad on the Result screen has a real Android layout to render into.
+class MainActivity : FlutterActivity() {
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        GoogleMobileAdsPlugin.registerNativeAdFactory(
+            flutterEngine,
+            "listTile",
+            ListTileNativeAdFactory(layoutInflater)
+        )
+    }
+
+    override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
+        super.cleanUpFlutterEngine(flutterEngine)
+        GoogleMobileAdsPlugin.unregisterNativeAdFactory(flutterEngine, "listTile")
+    }
+}
